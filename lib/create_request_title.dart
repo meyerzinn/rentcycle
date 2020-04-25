@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentcycle/create_request_details.dart';
 
@@ -44,18 +45,19 @@ class _CreateRequestTitleState extends State<CreateRequestTitle> {
         ),
       ),
     ]);
-    final makeTextInput = Row(children: [
+    final titleInputDecoration = InputDecoration(
+      hintText: 'a miter saw',
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 1.0),
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 1.0),
+      ),
+    );
+    final makeTitleInput = Row(children: [
       Flexible(
         child: TextField(
-          decoration: InputDecoration(
-            hintText: 'a miter saw',
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 1.0),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 1.0),
-            ),
-          ),
+          decoration: titleInputDecoration,
           textCapitalization: TextCapitalization.none,
           onChanged: _updateInput,
           onSubmitted: (String val) => _continue(context),
@@ -69,19 +71,18 @@ class _CreateRequestTitleState extends State<CreateRequestTitle> {
       ),
     ]);
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(children: [
-          Text(
-            "I'd like",
-            style: textStyle,
-            textAlign: TextAlign.left,
-          ),
-        ]),
-        makeTextInput,
-        makeContinueButton
-      ],
-    );
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(children: [
+            Text(
+              "I'd like",
+              style: textStyle,
+              textAlign: TextAlign.left,
+            ),
+          ]),
+          makeTitleInput,
+          makeContinueButton,
+        ]);
   }
 }
