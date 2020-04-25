@@ -14,53 +14,36 @@ ThemeData buildTheme(BuildContext context) {
       color: Colors.white,
       brightness: Brightness.light,
       textTheme: textTheme.copyWith(
-          title: GoogleFonts.merriweather(
-        fontWeight: FontWeight.w700,
-        fontStyle: FontStyle.italic,
-        fontSize: 24,
-        textStyle: textTheme.title,
-      )),
+        title: GoogleFonts.roboto(
+          fontWeight: FontWeight.bold,
+          fontSize: 26,
+          textStyle: textTheme.title,
+        )
+      ),
       elevation: 0,
       iconTheme: IconTheme.of(context).copyWith(color: Colors.black),
     ),
     highlightColor: Colors.transparent,
     textTheme: textTheme.copyWith(
-      // preview snippet
-      body2: GoogleFonts.merriweather(
-        fontWeight: FontWeight.w300,
-        fontSize: 16,
-        textStyle: textTheme.body2,
-      ),
-      // time in latest updates
-      body1: GoogleFonts.libreFranklin(
-        fontWeight: FontWeight.w500,
-        fontSize: 11,
-        color: Colors.black.withOpacity(0.5),
-        textStyle: textTheme.body1,
-      ),
-      // preview headlines
-      headline: GoogleFonts.libreFranklin(
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        textStyle: textTheme.headline,
-      ),
-      // (caption 2), preview category, stock ticker
-      subtitle: GoogleFonts.robotoCondensed(
-        fontWeight: FontWeight.w700,
-        fontSize: 16,
-      ),
-      subhead: GoogleFonts.libreFranklin(
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
-        textStyle: textTheme.subhead,
-      ),
-      // section titles: Top Highlights, Last Updated...
+      // section/card titles
       title: GoogleFonts.openSans(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
-        fontSize: 14,
+        fontSize: 16,
         textStyle: textTheme.title,
       ),
+      subtitle: GoogleFonts.openSans(
+        fontStyle: FontStyle.normal,
+        fontSize: 12,
+        textStyle: textTheme.subtitle
+      ),
+      display1: GoogleFonts.roboto(
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.bold,
+        color: ACCENT_COLOR,
+        textStyle: textTheme.display1,
+        fontSize: 35
+      )
     ),
   );
 }
