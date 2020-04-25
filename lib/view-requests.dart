@@ -198,8 +198,7 @@ class RequestWidgetState extends State<RequestWidget> {
       return Column(
         children: <Widget>[
           Icon(Icons.timer, size: 30),
-          Text("For ${ler.lendFor.inHours}:${(ler.lendFor.inMinutes % 60).toString()
-              .padLeft(2, '0')}", style: Theme.of(context).textTheme.subtitle)
+          Text("For ${ler.lendFor.inHours} Hours", style: Theme.of(context).textTheme.subtitle)
         ]
       );
     }
