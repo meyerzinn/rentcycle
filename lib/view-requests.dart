@@ -183,7 +183,7 @@ class RequestWidgetState extends State<RequestWidget> {
                       fontSize: 35
                   ))
               ),
-              title: Text(_request.itemName, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22)),
+              title: Text(_request.itemName, style: Theme.of(context).textTheme.title),
               subtitle: Text("${_request.receiver.name}"),
               trailing: showTiming()
             )

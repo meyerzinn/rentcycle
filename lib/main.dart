@@ -55,9 +55,9 @@ ThemeData buildTheme(BuildContext context) {
         textStyle: textTheme.subhead,
       ),
       // section titles: Top Highlights, Last Updated...
-      title: GoogleFonts.merriweather(
+      title: GoogleFonts.openSans(
         fontWeight: FontWeight.w700,
-        fontStyle: FontStyle.italic,
+        fontStyle: FontStyle.normal,
         fontSize: 14,
         textStyle: textTheme.title,
       ),

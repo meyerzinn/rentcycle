@@ -37,12 +37,16 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
         appBar: appBar,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Padding(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 16),
             child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[Text("Hi")],
-          ),
-        )));
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+
+                ],
+              ),
+            )));
   }
 }
 
