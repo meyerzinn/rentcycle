@@ -13,7 +13,7 @@ class _CreateRequestTitleState extends State<CreateRequestTitle> {
 
   void _continue(BuildContext context) {
     if (_title == "") return; // focus left the field while still empty, ignore
-    Navigator.push(
+    Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) =>
