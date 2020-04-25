@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Rentcycle',
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
-      home: RequestListWidget(users[0]),
+      home: LandingPage(),
     );
   }
 }
