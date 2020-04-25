@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rentcycle/landing.dart';
+import 'package:rentcycle/create_request_title_page.dart';
 import 'view-requests.dart';
 import 'util.dart';
 
@@ -55,7 +55,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Rentcycle',
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
-      home: LandingPage(),
+      initialRoute: '/',
+      routes: {
+        '/requests': (context) => RequestListWidget(users[0]),
+        '/requests/new': (context) => CreateRequestTitlePage(),
+      },
+      home: CreateRequestTitlePage(),
     );
   }
 }

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentcycle/create_request_title.dart';
 
-class LandingPage extends StatefulWidget {
+class CreateRequestTitlePage extends StatefulWidget {
   @override
-  _LandingPageState createState() => new _LandingPageState();
+  _CreateRequestTitlePageState createState() => new _CreateRequestTitlePageState();
 }
 
-class _LandingPageState extends State<LandingPage> {
+class _CreateRequestTitlePageState extends State<CreateRequestTitlePage> {
 
   @override
   Widget build(BuildContext context) {
