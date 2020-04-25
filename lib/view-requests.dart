@@ -108,20 +108,20 @@ class RequestListState extends State<RequestListWidget> {
   List<UserRequest> _sortByOrdering(List<UserRequest> requests) {
     switch (orderingMode) {
       case OrderingMode.LEAST_POINTS:
-        return requests.sortBy((x) => x.points).reversed.toList();
+        return requests.sortBy((x) => x.suggestedPoints).reversed.toList();
       case OrderingMode.MOST_POINTS:
-        return requests.sortBy((x) => x.points);
+        return requests.sortBy((x) => x.suggestedPoints);
       case OrderingMode.SHORTEST_DURATION:
         return requests.sortBy((x) {
           if (x is LendRequest)
-            return (x as LendRequest).lendFor.inMinutes;
+            return x.lendFor.inMinutes;
 
           return double.infinity;
         });
       case OrderingMode.LONGEST_DURATION:
         return requests.sortBy((x) {
           if (x is LendRequest)
-            return (x as LendRequest).lendFor.inMinutes;
+            return x.lendFor.inMinutes;
 
           return double.infinity;
         }).reversed.toList();
@@ -179,7 +179,7 @@ class RequestWidgetState extends State<RequestWidget> {
                           right: new BorderSide(width: 1.0, color: BORDER_COLOR)
                       )
                   ),
-                  child: Text(_request.points.toString(), style: Theme.of(context).textTheme.display1)
+                  child: Text(_request.pointsAvg.toString(), style: Theme.of(context).textTheme.display1)
               ),
               title: Text(_request.itemName, style: Theme.of(context).textTheme.title),
               subtitle: Text("${_request.receiver.name}", style: Theme.of(context).textTheme.subtitle),
