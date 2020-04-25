@@ -37,18 +37,20 @@ class RequestListState extends State<RequestListWidget> {
         title: Text("Requests"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add, color: Colors.white),
+            icon: Icon(Icons.add, color: BODY_COLOR),
             onPressed: () {
               // TODO redirect to Meyer's page
             },
+            tooltip: "Make Request"
           ),
           PopupMenuButton(
-            icon: Icon(Icons.sort, color: Colors.white),
+            icon: Icon(Icons.sort, color: BODY_COLOR),
             onSelected: (OrderingMode result) { setState(() {
               orderingMode = result;
               _requests = _getRequests();
             }); },
-            itemBuilder: _buildSortPopup
+            itemBuilder: _buildSortPopup,
+            tooltip: "Select Ordering",
           )
         ]
       ),
@@ -69,7 +71,7 @@ class RequestListState extends State<RequestListWidget> {
         onPressed: _refresh,
         tooltip: 'Refresh',
         child: Icon(Icons.refresh),
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: ACCENT_COLOR,
       ),
     );
   }
@@ -167,24 +169,20 @@ class RequestWidgetState extends State<RequestWidget> {
             borderRadius: BorderRadius.circular(10)
           ),
           child: Container(
-            decoration: BoxDecoration(color: Colors.white70),
+            decoration: BoxDecoration(color: SECONDARY_BG_COLOR),
             child: ListTile(
               contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               leading: Container(
                   padding: EdgeInsets.only(right: 12.0),
                   decoration: new BoxDecoration(
                       border: new Border(
-                          right: new BorderSide(width: 1.0, color: Colors.grey)
+                          right: new BorderSide(width: 1.0, color: BORDER_COLOR)
                       )
                   ),
-                  child: Text(_request.points.toString(), style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.greenAccent,
-                      fontSize: 35
-                  ))
+                  child: Text(_request.points.toString(), style: Theme.of(context).textTheme.display1)
               ),
               title: Text(_request.itemName, style: Theme.of(context).textTheme.title),
-              subtitle: Text("${_request.receiver.name}"),
+              subtitle: Text("${_request.receiver.name}", style: Theme.of(context).textTheme.subtitle),
               trailing: showTiming()
             )
           )
@@ -201,7 +199,7 @@ class RequestWidgetState extends State<RequestWidget> {
         children: <Widget>[
           Icon(Icons.timer, size: 30),
           Text("For ${ler.lendFor.inHours}:${(ler.lendFor.inMinutes % 60).toString()
-              .padLeft(2, '0')}")
+              .padLeft(2, '0')}", style: Theme.of(context).textTheme.subtitle)
         ]
       );
     }

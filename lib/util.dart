@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class User {
   final int id;
   final String name;
@@ -55,3 +57,10 @@ extension SortableList<T> on List<T> {
     return this;
   }
 }
+
+// COLORS
+const ACCENT_COLOR = Colors.greenAccent;
+const BODY_COLOR = Colors.black;
+const MAIN_BG_COLOR = Colors.white;
+const SECONDARY_BG_COLOR = Colors.white70;
+const BORDER_COLOR = Colors.grey;
