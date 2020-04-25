@@ -16,7 +16,8 @@ class _CreateRequestTitleState extends State<CreateRequestTitle> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CreateRequestDetailsPage(_title)));
+            builder: (context) =>
+                CreateRequestDetailsPage(initialTitle: _title)));
   }
 
   void _updateInput(String newTitle) {
