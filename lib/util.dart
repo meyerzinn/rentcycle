@@ -7,24 +7,35 @@ class User {
   User(this.id, this.name, {this.email, this.address});
 }
 
-abstract class Bounty {
+abstract class UserRequest {
+  final int id;
   final String itemName;
+  final int points;
+  final DateTime postDate;
+
+  List<int> hideFrom;
 
   User lender, receiver;
 
-  Bounty(this.itemName, this.receiver);
+  UserRequest(this.id, this.itemName, this.points, this.receiver, this.postDate) {
+    hideFrom = <int>[];
+  }
 
-  void acceptBounty(User u); // accept a bounty (be willing to give)
+  void fulfillRequest(User u); // accept a bounty (be willing to give)
   void acceptOffer(User u);
+  void hideFromUser(User u) {
+    if (!hideFrom.contains(u.id))
+      hideFrom.add(u.id);
+  }
 }
 
-class LendBounty extends Bounty {
-  final DateTime lendFor;
+class LendRequest extends UserRequest {
+  final Duration lendFor;
 
-  LendBounty(String itemName, User receiver, this.lendFor)
-    : super(itemName, receiver);
+  LendRequest(int id, String itemName, int points, User receiver, DateTime postDate, this.lendFor)
+    : super(id, itemName, points, receiver, postDate);
 
-  void acceptBounty(User u) {
+  void fulfillRequest(User u) {
 
   }
 
@@ -34,4 +45,13 @@ class LendBounty extends Bounty {
 }
 
 var users = [User(0, "Joe Test"), User(1, "Steven Debug")];
-var bounties = <Bounty>[];
+var userRequests = <UserRequest>[
+  LendRequest(0, "Lawn Mower", 10, users[0], DateTime.now(), new Duration(hours: 6))
+];
+
+extension SortableList<T> on List<T> {
+  List<T> sortBy(Comparable Function(T) fn) {
+    sort((a, b) => fn(a).compareTo(fn(b)));
+    return this;
+  }
+}
