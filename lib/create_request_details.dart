@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rentcycle/util.dart';
-import 'package:rentcycle/view-requests.dart';
+import 'package:rentcycle/view_requests.dart';
 
 class CreateRequestDetailsPage extends StatefulWidget {
   final String initialTitle;

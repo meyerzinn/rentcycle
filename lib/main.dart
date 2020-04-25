@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentcycle/create_request_title_page.dart';
-import 'view-requests.dart';
+import 'view_requests.dart';
 import 'util.dart';
 
 void main() => runApp(MyApp());
