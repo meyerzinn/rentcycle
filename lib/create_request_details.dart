@@ -36,14 +36,13 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
     return Scaffold(
         appBar: appBar,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Form(
+        body: Padding(
+            child: Form(
           key: _formKey,
           child: Column(
-            children: <Widget>[
-              Text("Hi")
-            ],
+            children: <Widget>[Text("Hi")],
           ),
-        ));
+        )));
   }
 }
 
