@@ -49,6 +49,7 @@ class RequestListState extends State<RequestListPage> {
           itemCount: messageCount,
           itemBuilder: (_, int index) {
             final DocumentSnapshot document = snapshot.data.documents[index];
+            if (document.data['user'] == currentUser) return null;
             UserRequest request = UserRequest(
               id: document.documentID,
               title: document.data['title'],
