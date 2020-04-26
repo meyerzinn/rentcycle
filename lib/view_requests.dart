@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rentcycle/create_request_title_page.dart';
+import 'package:rentcycle/create_request.dart';
 import 'util.dart';
 
 class RequestListWidget extends StatefulWidget {
-  RequestListWidget();
+  final Firestore firestore;
+
+  RequestListWidget(this.firestore);
 
   @override
   RequestListState createState() => RequestListState();
@@ -18,14 +21,52 @@ enum OrderingMode {
 }
 
 class RequestListState extends State<RequestListWidget> {
-  List<UserRequest> _requests;
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
+
+  StreamBuilder<QuerySnapshot> _getRequests() {
+    var stream = widget.firestore.collection('/requests');
+    if (orderingMode == OrderingMode.MOST_POINTS) {
+      stream = stream.orderBy("suggested_points", descending: true);
+    } else if (orderingMode == OrderingMode.LEAST_POINTS) {
+      stream = stream.orderBy("suggested_points", descending: false);
+    } else if (orderingMode == OrderingMode.LONGEST_DURATION) {
+      stream = stream.orderBy("duration", descending: true);
+    } else if (orderingMode == OrderingMode.SHORTEST_DURATION) {
+      stream = stream.orderBy("duration", descending: false);
+    } else if (orderingMode == OrderingMode.MOST_RECENT) {
+      stream = stream.orderBy("created_at", descending: true);
+    }
+    return StreamBuilder<QuerySnapshot>(
+      stream: stream.snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) return Text("Loading..."); // todo make pretty
+        final int messageCount = snapshot.data.documents.length;
+        return ListView.builder(
+          itemCount: messageCount,
+          itemBuilder: (_, int index) {
+            final DocumentSnapshot document = snapshot.data.documents[index];
+            UserRequest request = UserRequest(
+                id: document.documentID,
+                title: document.data['title'],
+                created_at: DateTime.tryParse(document.data['created_at']),
+                image_url: document.data['image_url'],
+                description: document.data['description'],
+                suggested_points: document.data['suggested_points'] as int,
+                user: document.data['user'],
+                address: document.data['address']);
+            var userDoc = widget.firestore.document(request.user);
+            return RequestWidget(widget.firestore, request);
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext _) {
-    if (_requests == null) _getRequests();
-
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text("Requests"), actions: <Widget>[
         IconButton(
             icon: Icon(Icons.add, color: BODY_COLOR),
@@ -33,7 +74,8 @@ class RequestListState extends State<RequestListWidget> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => CreateRequestTitlePage()));
+                      builder: (context) =>
+                          CreateRequestDetailsPage(widget.firestore)));
             },
             tooltip: "Make Request"),
         PopupMenuButton(
@@ -41,28 +83,24 @@ class RequestListState extends State<RequestListWidget> {
           onSelected: (OrderingMode result) {
             setState(() {
               orderingMode = result;
-              _sortByOrdering();
             });
           },
           itemBuilder: _buildSortPopup,
           tooltip: "Select Ordering",
         )
       ]),
-      body: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: _requests.length,
-          itemBuilder: (BuildContext bctx, int ndx) {
-            var reqW = _requests[ndx];
-            if (reqW.hideFrom.contains(currentUser.id)) return null;
-
-            return RequestWidget(currentUser, reqW);
-          }));
-  }
-
-  void _getRequests() {
-    _requests = userRequests.where((x) => !x.hideFrom.contains(currentUser.id)).toList();
-    _sortByOrdering();
+      body: _getRequests(),
+//        ListView.builder(
+//            scrollDirection: Axis.vertical,
+//            shrinkWrap: true,
+//            itemCount: _requests.length,
+//            itemBuilder: (BuildContext bctx, int ndx) {
+//              var reqW = _requests[ndx];
+//              if (reqW.hideFrom.contains(currentUser.id)) return null;
+//
+//              return RequestWidget(currentUser, reqW);
+//            }));
+    );
   }
 
   List<PopupMenuEntry<OrderingMode>> _buildSortPopup(BuildContext bctx) =>
@@ -80,56 +118,30 @@ class RequestListState extends State<RequestListWidget> {
             value: OrderingMode.SHORTEST_DURATION,
             child: Text("Shortest Duration")),
       ];
-
-  void _sortByOrdering() {
-    switch (orderingMode) {
-      case OrderingMode.LEAST_POINTS:
-        _requests.sortBy((x) => x.pointsAvg);
-        _requests = _requests.reversed.toList();
-        break;
-      case OrderingMode.MOST_POINTS:
-        _requests.sortBy((x) => x.pointsAvg);
-        break;
-      case OrderingMode.SHORTEST_DURATION:
-        _requests.sortBy((x) {
-          if (x is LendRequest) return x.lendFor;
-
-          return double.infinity;
-        });
-        print(_requests[0]);
-        break;
-      case OrderingMode.LONGEST_DURATION:
-        _requests.sortBy((x) {
-            if (x is LendRequest) return x.lendFor;
-
-            return double.infinity;
-          });
-
-        _requests = _requests.reversed.toList();
-        break;
-      case OrderingMode.MOST_RECENT:
-        _requests.sortBy((x) => DateTime.now().difference(x.postDate).inMinutes);
-        break;
-      default:
-        break;
-    }
-  }
 }
 
 class RequestWidget extends StatefulWidget {
-  final User _user;
+  final Firestore firestore;
   final UserRequest _request;
 
-  RequestWidget(this._user, this._request);
+  RequestWidget(this.firestore, this._request);
 
   @override
   State<StatefulWidget> createState() => RequestWidgetState(_request);
 }
 
 class RequestWidgetState extends State<RequestWidget> {
-  UserRequest _request;
+  final UserRequest _request;
+  String userName = "";
 
   RequestWidgetState(this._request);
+
+  @override
+  void initState() {
+    _request
+        .getUser(widget.firestore)
+        .then((User user) => setState(() => userName = user.name));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +155,7 @@ class RequestWidgetState extends State<RequestWidget> {
             onDismissed: (direction) {
               if (direction == DismissDirection.horizontal) {
                 setState(() {
-                  _request.hideFromUser(widget._user);
+                  _request.hide();
                 });
               }
             },
@@ -164,22 +176,20 @@ class RequestWidgetState extends State<RequestWidget> {
                                 border: new Border(
                                     right: new BorderSide(
                                         width: 1.0, color: BORDER_COLOR))),
-                            child: Text(_request.pointsAvg.toString(),
+                            child: Text(_request.suggested_points.toString(),
                                 style: Theme.of(context).textTheme.display1)),
-                        title: Text(_request.itemName,
+                        title: Text(_request.title,
                             style: Theme.of(context).textTheme.title),
-                        subtitle: Text("${_request.receiver.name}",
+                        subtitle: Text(userName,
                             style: Theme.of(context).textTheme.subtitle),
                         trailing: showTiming())))));
   }
 
   Widget showTiming() {
-    if (_request is LendRequest) {
-      var ler = _request as LendRequest;
-
+    if (_request.duration != null) {
       return Column(children: <Widget>[
         Icon(Icons.timer, size: 30),
-        Text("For ${ler.lendFor} Hours",
+        Text("For ${_request.duration} Hours",
             style: Theme.of(context).textTheme.subtitle)
       ]);
     }

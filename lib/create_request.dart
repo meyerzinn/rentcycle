@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rentcycle/util.dart';
@@ -6,13 +7,13 @@ import 'package:rentcycle/view_requests.dart';
 import 'dart:math';
 
 class CreateRequestDetailsPage extends StatefulWidget {
-  final String initialTitle;
+  final Firestore firestore;
 
-  CreateRequestDetailsPage({this.initialTitle});
+  CreateRequestDetailsPage(this.firestore);
 
   @override
   _CreateRequestDetailsPageState createState() =>
-      new _CreateRequestDetailsPageState(title: initialTitle);
+      new _CreateRequestDetailsPageState();
 }
 
 class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
@@ -20,12 +21,13 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
   int duration = 2;
   bool buy = false;
   String address = "";
-  String description = "";
+  String description;
+  int suggested_points;
 
   final _formKey = GlobalKey<FormState>();
 
   _CreateRequestDetailsPageState(
-      {@required this.title,
+      {this.title,
       this.duration = 2,
       this.buy = false,
       this.address = "",
@@ -33,11 +35,18 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-//    print();
+    final titleInputDecoration = InputDecoration(
+      hintText: 'a miter saw',
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 1.0),
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 1.0),
+      ),
+    );
     final appBar = AppBar(
       backgroundColor: Theme.of(context).appBarTheme.color,
       brightness: Brightness.light,
-//      elevation: 0,
       title:
           Text("Create a request", style: Theme.of(context).textTheme.headline),
     );
@@ -52,9 +61,9 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[Text("I'd like", style: style)],
-                  ),
+                  Row(children: [
+                    Text("I'd like", style: style),
+                  ]),
                   Row(
                     children: <Widget>[
                       Flexible(
@@ -96,9 +105,10 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       ),
                     ),
                     Text("hours", style: style),
-                    Flexible(child: Container(), flex: 2),
+                  ]),
+                  Row(children: [
+                    Flexible(child: Container()),
                     Text("or", style: style),
-                    Flexible(child: Container(), flex: 2),
                     Checkbox(
                       value: buy,
                       tristate: false,
@@ -124,6 +134,33 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       ),
                     ),
                   ]),
+                  Row(children: [
+                    Text("Suggested points: ", style: style),
+                    Container(
+                      width: 8,
+                    ),
+                    Flexible(
+                        child: TextFormField(
+                      autovalidate: true,
+                      controller: TextEditingController(
+                          text: suggested_points.toString()),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
+                      validator: (String value) {
+                        return int.tryParse(value) != null
+                            ? null
+                            : "Please enter a number.";
+                      },
+                      onChanged: (String value) =>
+                          setState(() => suggested_points = int.parse(value)),
+                    )),
+                    Flexible(
+                      child: Container(),
+                      flex: 4,
+                    )
+                  ]),
                   Container(height: 12),
                   Row(
                     children: <Widget>[
@@ -147,14 +184,12 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       FlatButton(
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
-                            var userReq = _makeUserReq();
-                            userRequests.add(userReq);
+                            _createUserRequest();
 
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        RequestListWidget()));
+                                    builder: (context) => RequestListWidget(widget.firestore)));
                           }
                         },
                         child: const Text('CONTINUE'),
@@ -166,18 +201,28 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
             )));
   }
 
-  UserRequest _makeUserReq() {
-    int id = new Random().nextInt(1 << 16);
-
-    if (buy) {
-      return BuyRequest(
-        id, title, 10, currentUser, description, address, "",
-      );
-    }
-    else {
-      return LendRequest(
-        id, title, 10, currentUser, description, address, "", duration
-      );
-    }
+  UserRequest _createUserRequest() {
+    widget.firestore.collection('/requests').document().setData({
+      "user": currentUser,
+      "address": address,
+      "created_at": FieldValue.serverTimestamp(),
+      "description": description,
+      "duration": buy ? null : duration,
+      "image_url": null,
+      "suggested_points": 10, //todo
+      "title": title,
+    });
+//    int id = new Random().nextInt(1 << 16);
+//
+//    if (buy) {
+//      return BuyRequest(
+//        id, title, 10, currentUser, description, address, "",
+//      );
+//    }
+//    else {
+//      return LendRequest(
+//        id, title, 10, currentUser, description, address, "", duration
+//      );
+//    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rentcycle/create_request_title_page.dart';
+import 'package:rentcycle/create_request.dart';
 import 'view_requests.dart';
 import 'util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,10 +10,10 @@ import 'keys.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final FirebaseApp app = await FirebaseApp.configure(
-    name: 'test',
+    name: 'client',
     options: AppFirebaseOptions,
   );
-  runApp(MyApp());
+  runApp(MyApp(Firestore(app: app)));
 }
 
 ThemeData buildTheme(BuildContext context) {
@@ -35,10 +35,9 @@ ThemeData buildTheme(BuildContext context) {
     highlightColor: Colors.transparent,
     textTheme: textTheme.copyWith(
         // section/card titles
-        title: GoogleFonts.openSans(
-          fontWeight: FontWeight.w700,
+        title: GoogleFonts.spartan(
           fontStyle: FontStyle.normal,
-          fontSize: 16,
+          fontSize: 24,
           textStyle: textTheme.title,
         ),
         subtitle: GoogleFonts.openSans(
@@ -55,6 +54,10 @@ ThemeData buildTheme(BuildContext context) {
 }
 
 class MyApp extends StatelessWidget {
+  final Firestore firestore;
+
+  MyApp(this.firestore);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -63,10 +66,10 @@ class MyApp extends StatelessWidget {
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
       initialRoute: '/',
       routes: {
-        '/requests': (context) => RequestListWidget(),
-        '/requests/new': (context) => CreateRequestTitlePage(),
+        '/requests': (context) => RequestListWidget(firestore),
+        '/requests/new': (context) => CreateRequestDetailsPage(firestore),
       },
-      home: CreateRequestTitlePage(),
+      home: CreateRequestDetailsPage(firestore),
     );
   }
 }
