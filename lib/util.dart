@@ -63,7 +63,7 @@ class UserRequest {
       this.duration});
 
   Future<User> getUser(Firestore firestore) async {
-    return User.get(firestore, user);
+    return User.get(firestore, '/users/' + user);
   }
 
   void hide(Firestore firestore) async {

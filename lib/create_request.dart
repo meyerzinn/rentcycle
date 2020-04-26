@@ -102,6 +102,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                           WhitelistingTextInputFormatter.digitsOnly
                         ],
                         validator: (String value) {
+                          if (buy) return null;
                           return int.tryParse(value) != null
                               ? null
                               : "Please enter a number.";
@@ -198,6 +199,8 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         RequestListPage(widget.firestore)));
+                          } else {
+                            print("invalid form");
                           }
                         },
                         child: const Text('CONTINUE'),
@@ -211,7 +214,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
 
   UserRequest _createUserRequest() {
     widget.firestore.collection('/requests').document().setData({
-      "user": currentUser,
+      "user": widget.firestore.document(currentUser),
       "address": address,
       "created_at": FieldValue.serverTimestamp(),
       "description": description,

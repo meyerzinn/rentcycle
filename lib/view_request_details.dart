@@ -56,7 +56,7 @@ class RequestDetailsState extends State<RequestDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               RaisedButton(
-                child: Text("Bid", style: Theme.of(bctx).textTheme.button),
+                child: Text("Make an offer", style: Theme.of(bctx).textTheme.button),
                 color: ACCENT_COLOR,
                 onPressed: () {
                   showDialog(
@@ -69,7 +69,7 @@ class RequestDetailsState extends State<RequestDetailsPage> {
               ),
               RaisedButton(
                 child: Text("Ignore", style: Theme.of(bctx).textTheme.button),
-                color: ACCENT_COLOR,
+                color: Theme.of(context).buttonColor,
                 onPressed: () {
                   widget.request.hide(widget.firestore);
                   Navigator.pushReplacement(bctx,

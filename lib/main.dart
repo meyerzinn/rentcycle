@@ -19,48 +19,49 @@ Future<void> main() async {
 ThemeData buildTheme(BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
   return ThemeData(
-    scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(
-      color: Colors.white,
-      brightness: Brightness.light,
+      scaffoldBackgroundColor: Colors.white,
+      appBarTheme: AppBarTheme(
+        color: Colors.white,
+        brightness: Brightness.light,
+        textTheme: textTheme.copyWith(
+            title: GoogleFonts.roboto(
+          fontWeight: FontWeight.bold,
+          fontSize: 26,
+          textStyle: textTheme.title,
+        )),
+        elevation: 0,
+        iconTheme: IconTheme.of(context).copyWith(color: Colors.black),
+      ),
+      highlightColor: Colors.transparent,
       textTheme: textTheme.copyWith(
-          title: GoogleFonts.roboto(
-        fontWeight: FontWeight.bold,
-        fontSize: 26,
-        textStyle: textTheme.title,
-      )),
-      elevation: 0,
-      iconTheme: IconTheme.of(context).copyWith(color: Colors.black),
-    ),
-    highlightColor: Colors.transparent,
-    textTheme: textTheme.copyWith(
-      // section/card titles
-      title: GoogleFonts.openSans(
-        fontWeight: FontWeight.w700,
-        fontStyle: FontStyle.normal,
-        fontSize: 18,
-        textStyle: textTheme.title,
-      ),
-      subtitle: GoogleFonts.openSans(
-        fontStyle: FontStyle.normal,
-        fontSize: 12,
-        textStyle: textTheme.subtitle
-      ),
-      display1: GoogleFonts.roboto(
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.bold,
-        color: ACCENT_COLOR,
-        textStyle: textTheme.display1,
-        fontSize: 35
-      ),
-      body1: GoogleFonts.openSans(
-        fontStyle: FontStyle.normal,
-        fontSize: 18,
-        textStyle: textTheme.body1
-      )
-    ),
-    cursorColor: ACCENT_COLOR
-  );
+          // section/card titles
+          title: GoogleFonts.openSans(
+            fontWeight: FontWeight.w700,
+            fontStyle: FontStyle.normal,
+            fontSize: 18,
+            textStyle: textTheme.title,
+          ),
+          subtitle: GoogleFonts.openSans(
+              fontStyle: FontStyle.normal,
+              fontSize: 12,
+              textStyle: textTheme.subtitle),
+          display1: GoogleFonts.roboto(
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.bold,
+              color: ACCENT_COLOR,
+              textStyle: textTheme.display1,
+              fontSize: 35),
+          display2: GoogleFonts.spartan(
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.bold,
+              color: ACCENT_COLOR,
+              textStyle: textTheme.display1,
+              fontSize: 35),
+          body1: GoogleFonts.openSans(
+              fontStyle: FontStyle.normal,
+              fontSize: 18,
+              textStyle: textTheme.body1)),
+      cursorColor: ACCENT_COLOR);
 }
 
 class MyApp extends StatelessWidget {
