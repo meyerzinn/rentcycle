@@ -57,7 +57,7 @@ class RequestListState extends State<RequestListPage> {
               image_url: document.data['image_url'],
               description: document.data['description'],
               suggested_points: document.data['suggested_points'],
-              user: document.data['user'],
+              user: (document.data['user'] as DocumentReference).documentID,
               address: document.data['address'],
               duration: document.data['duration'],
             );
@@ -150,7 +150,7 @@ class RequestWidgetState extends State<RequestWidget> {
                       RequestDetailsPage(widget.firestore, _request)));
         },
         child: Dismissible(
-            key: UniqueKey(),
+            key: Key(_request.id),
             // todo change this to key when implementing dismissals
             onDismissed: (direction) {
               if (direction == DismissDirection.horizontal) {

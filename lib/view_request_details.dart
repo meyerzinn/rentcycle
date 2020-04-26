@@ -39,7 +39,7 @@ class RequestDetailsState extends State<RequestDetailsPage> {
               margin: new EdgeInsets.only(bottom: 10),
               child: Row(children: <Widget>[
                 Text("By: ", style: Theme.of(bctx).textTheme.title),
-                Text(user?.name, style: Theme.of(bctx).textTheme.body1)
+                Text(user != null ? user.name : "", style: Theme.of(bctx).textTheme.body1)
               ]),
             ),
             Container(

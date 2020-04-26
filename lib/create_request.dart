@@ -157,7 +157,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                           validator: (String value) {
                             return int.tryParse(value) != null
                                 ? null
-                                : "Please enter a number.";
+                                : "";
                           },
                           onChanged: (String value) =>
                               setState(() =>
