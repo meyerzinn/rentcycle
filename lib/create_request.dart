@@ -38,11 +38,11 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
     final appBar = AppBar(
       backgroundColor: Theme.of(context).appBarTheme.color,
       brightness: Brightness.light,
-      title:
-          Text("Create a request"),
+      title: Text("Create a request"),
     );
     var style = Theme.of(context).textTheme.display3;
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: appBar,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Padding(
@@ -52,6 +52,13 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Image(
+                      image: AssetImage("assets/logo_no_text.png"),
+                      height: 128,
+                    )
+                  ]),
+                  Container(height: 24),
                   Row(children: [
                     Text("I'd like", style: style),
                   ]),
@@ -59,6 +66,10 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     children: <Widget>[
                       Flexible(
                         child: TextFormField(
+                          style: Theme.of(context).textTheme.body1,
+                          decoration: InputDecoration(
+                            hintText: 'a miter saw',
+                          ),
                           onChanged: (String newTitle) =>
                               setState(() => title = newTitle),
                           validator: (String value) {
@@ -77,10 +88,13 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       flex: 1,
                       child: TextFormField(
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(labelText: "(number)"),
                         inputFormatters: [
                           WhitelistingTextInputFormatter.digitsOnly
                         ],
+                        style: Theme.of(context).textTheme.body1,
+                        decoration: InputDecoration(
+                          hintText: "2",
+                        ),
                         validator: (String value) {
                           if (buy) return null;
                           return int.tryParse(value) != null
@@ -111,7 +125,8 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     Container(width: 8),
                     Flexible(
                       child: TextFormField(
-                        decoration: InputDecoration(labelText: "(address)"),
+                        style: Theme.of(context).textTheme.body1,
+                        decoration: InputDecoration(hintText: "my address"),
                         validator: (value) {
                           if (value.isEmpty || value == "") {
                             return "Please enter your address.";
@@ -137,10 +152,8 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       validator: (String value) {
                         return int.tryParse(value) != null ? null : "";
                       },
+                      decoration: InputDecoration(hintText: "10"),
                       style: Theme.of(context).textTheme.body1,
-                      decoration: InputDecoration(
-                        labelText: '(number)',
-                      ),
                       onChanged: (String value) =>
                           setState(() => suggested_points = int.parse(value)),
                     ))
@@ -153,13 +166,14 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      Flexible(child: TextFormField(
-                        onChanged: (String value) {
-                          setState(() {
-                            description = value;
-                          });
-                        },
-                      ))
+                      Flexible(
+                          child: TextFormField(
+                              onChanged: (String value) {
+                                setState(() {
+                                  description = value;
+                                });
+                              },
+                              style: Theme.of(context).textTheme.body1))
                     ],
                   ),
                   Row(

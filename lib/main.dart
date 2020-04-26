@@ -66,8 +66,7 @@ ThemeData buildTheme(BuildContext context) {
               fontSize: 30),
           body1: GoogleFonts.openSans(
               fontStyle: FontStyle.normal,
-              fontSize: 18,
-              textStyle: textTheme.body1)),
+              fontSize: 18)),
       cursorColor: ACCENT_COLOR);
 }
 
