@@ -84,6 +84,7 @@ class MyApp extends StatelessWidget {
       title: 'Rentcycle',
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
       initialRoute: '/',
+      debugShowCheckedModeBanner: false,
       routes: {
         '/requests': (context) => RequestListPage(firestore),
         '/requests/new': (context) => CreateRequestDetailsPage(firestore)
