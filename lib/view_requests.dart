@@ -24,7 +24,7 @@ class RequestListState extends State<RequestListWidget> {
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
   StreamBuilder<QuerySnapshot> _getRequests() {
-    var stream = widget.firestore.collection('/requests');
+    dynamic stream = widget.firestore.collection('/requests');
     if (orderingMode == OrderingMode.MOST_POINTS) {
       stream = stream.orderBy("suggested_points", descending: true);
     } else if (orderingMode == OrderingMode.LEAST_POINTS) {
@@ -46,15 +46,16 @@ class RequestListState extends State<RequestListWidget> {
           itemBuilder: (_, int index) {
             final DocumentSnapshot document = snapshot.data.documents[index];
             UserRequest request = UserRequest(
-                id: document.documentID,
-                title: document.data['title'],
-                created_at: DateTime.tryParse(document.data['created_at']),
-                image_url: document.data['image_url'],
-                description: document.data['description'],
-                suggested_points: document.data['suggested_points'] as int,
-                user: document.data['user'],
-                address: document.data['address']);
-            var userDoc = widget.firestore.document(request.user);
+              id: document.documentID,
+              title: document.data['title'],
+              created_at: (document.data['created_at'] as Timestamp).toDate(),
+              image_url: document.data['image_url'],
+              description: document.data['description'],
+              suggested_points: document.data['suggested_points'] as int,
+              user: document.data['user'],
+              address: document.data['address'],
+              duration: document.data['duration'] != null ? int.tryParse(document.data['duration']) : null,
+            );
             return RequestWidget(widget.firestore, request);
           },
         );

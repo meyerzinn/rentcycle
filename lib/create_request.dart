@@ -22,7 +22,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
   bool buy = false;
   String address = "";
   String description;
-  int suggested_points;
+  int suggested_points = 10;
 
   final _formKey = GlobalKey<FormState>();
 

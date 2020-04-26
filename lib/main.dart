@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
         '/requests': (context) => RequestListWidget(firestore),
         '/requests/new': (context) => CreateRequestDetailsPage(firestore),
       },
-      home: CreateRequestDetailsPage(firestore),
+      home: RequestListWidget(firestore),
     );
   }
 }
