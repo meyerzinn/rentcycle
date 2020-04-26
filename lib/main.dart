@@ -21,14 +21,16 @@ ThemeData buildTheme(BuildContext context) {
   return ThemeData(
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
-        color: Colors.white,
+        color: Colors.transparent,
         brightness: Brightness.light,
-        textTheme: textTheme.copyWith(
-            title: GoogleFonts.roboto(
-          fontWeight: FontWeight.bold,
-          fontSize: 26,
-          textStyle: textTheme.title,
-        )),
+        textTheme: TextTheme(
+          title: GoogleFonts.raleway(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontStyle: FontStyle.italic,
+            fontSize: 32,
+          ),
+        ),
         elevation: 0,
         iconTheme: IconTheme.of(context).copyWith(color: Colors.black),
       ),
@@ -36,7 +38,7 @@ ThemeData buildTheme(BuildContext context) {
       textTheme: textTheme.copyWith(
           // section/card titles
           title: GoogleFonts.openSans(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontStyle: FontStyle.normal,
             fontSize: 18,
             textStyle: textTheme.title,
@@ -48,15 +50,15 @@ ThemeData buildTheme(BuildContext context) {
           display1: GoogleFonts.roboto(
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.bold,
-              color: ACCENT_COLOR,
+              color: Colors.blue,
               textStyle: textTheme.display1,
-              fontSize: 35),
+              fontSize: 30),
           display2: GoogleFonts.spartan(
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.bold,
-              color: ACCENT_COLOR,
+              color: Colors.blue,
               textStyle: textTheme.display1,
-              fontSize: 35),
+              fontSize: 24),
           body1: GoogleFonts.openSans(
               fontStyle: FontStyle.normal,
               fontSize: 18,

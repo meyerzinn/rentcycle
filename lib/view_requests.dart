@@ -21,14 +21,31 @@ enum OrderingMode {
   LONGEST_DURATION
 }
 
+extension Readable on OrderingMode {
+  String readable() {
+    switch (this) {
+      case OrderingMode.MOST_RECENT:
+        return "all requests";
+      case OrderingMode.MOST_POINTS:
+        return "by most points";
+      case OrderingMode.LEAST_POINTS:
+        return "by least points";
+      case OrderingMode.SHORTEST_DURATION:
+        return "buy requests";
+      case OrderingMode.LONGEST_DURATION:
+        return "borrow requests";
+      default:
+        return null;
+    }
+  }
+}
+
 class RequestListState extends State<RequestListPage> {
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
   StreamBuilder<QuerySnapshot> _getRequests() {
     CollectionReference stream = widget.firestore.collection('requests');
     Query query;
-//        .where('user', isGreaterThan: currentUser)
-//        .where('user', isLessThan: currentUser);
     if (orderingMode == OrderingMode.MOST_POINTS) {
       query = stream.orderBy("suggested_points", descending: true);
     } else if (orderingMode == OrderingMode.LEAST_POINTS) {
@@ -44,13 +61,19 @@ class RequestListState extends State<RequestListPage> {
       stream: query.snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return Text("Loading..."); // todo make pretty
-        final int messageCount = snapshot.data.documents.length;
+        final int messageCount = snapshot.data.documents.length + 1;
         print("Data changed, loading $messageCount listings.");
         return new ListView.builder(
           key: UniqueKey(),
           itemCount: messageCount,
           itemBuilder: (_, int index) {
-            final DocumentSnapshot document = snapshot.data.documents[index];
+            print(index);
+            if (index == 0)
+              return Center(
+                  child: Text("(showing ${orderingMode.readable()})",
+                      style: Theme.of(context).textTheme.title));
+            var idx = index - 1;
+            final DocumentSnapshot document = snapshot.data.documents[idx];
             UserRequest request = UserRequest(
               id: document.reference.path,
               title: document.data['title'],
@@ -73,30 +96,32 @@ class RequestListState extends State<RequestListPage> {
   @override
   Widget build(BuildContext _) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text("Requests"), actions: <Widget>[
-        IconButton(
-            icon: Icon(Icons.add, color: BODY_COLOR),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          CreateRequestDetailsPage(widget.firestore)));
-            },
-            tooltip: "Make Request"),
-        PopupMenuButton(
-          icon: Icon(Icons.sort, color: BODY_COLOR),
-          onSelected: (OrderingMode result) {
-            setState(() {
-              orderingMode = result;
-            });
-          },
-          itemBuilder: _buildSortPopup,
-          tooltip: "Select Ordering",
-        )
-      ]),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+          title: Text("Requests",
+              style: Theme.of(context).appBarTheme.textTheme.title),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.add, color: BODY_COLOR),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              CreateRequestDetailsPage(widget.firestore)));
+                },
+                tooltip: "Make Request"),
+            PopupMenuButton(
+              icon: Icon(Icons.sort, color: BODY_COLOR),
+              onSelected: (OrderingMode result) {
+                setState(() {
+                  orderingMode = result;
+                });
+              },
+              itemBuilder: _buildSortPopup,
+              tooltip: "Select Ordering",
+            )
+          ]),
       body: _getRequests(),
     );
   }
@@ -104,11 +129,11 @@ class RequestListState extends State<RequestListPage> {
   List<PopupMenuEntry<OrderingMode>> _buildSortPopup(BuildContext bctx) =>
       <PopupMenuEntry<OrderingMode>>[
         const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.MOST_RECENT, child: Text("Most Recent")),
+            value: OrderingMode.MOST_RECENT, child: Text("Show all")),
         const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.LEAST_POINTS, child: Text("Least Points")),
+            value: OrderingMode.LEAST_POINTS, child: Text("Least points")),
         const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.MOST_POINTS, child: Text("Most Points")),
+            value: OrderingMode.MOST_POINTS, child: Text("Most points")),
         const PopupMenuItem<OrderingMode>(
             value: OrderingMode.LONGEST_DURATION,
             child: Text("Requests to buy")),
@@ -150,50 +175,41 @@ class RequestWidgetState extends State<RequestWidget> {
               child: Card(
                   elevation: 2.0,
                   margin:
-                  new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  child: Container(
-                      decoration: BoxDecoration(color: SECONDARY_BG_COLOR),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                          leading: Container(
-                              padding: EdgeInsets.only(right: 12.0),
-                              decoration: new BoxDecoration(
-                                  border: new Border(
-                                      right: new BorderSide(
-                                          width: 1.0, color: BORDER_COLOR))),
-                              child: Text(_request.suggested_points.toString(),
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .display1)),
-                          subtitle: Text(_request.title,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .title),
-                          title: Text(
-                              user.data != null ? "${user.data.name} is requesting" : "",
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .subtitle),
-                          trailing: showTiming()))));
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                    trailing: Container(
+                        padding: EdgeInsets.only(left: 12.0),
+                        decoration: new BoxDecoration(
+                            border: new Border(
+                                left: new BorderSide(
+                                    width: 1.0, color: BORDER_COLOR))),
+                        child: Text("${_request.suggested_points} pts",
+                            style: Theme.of(context).textTheme.display1)),
+                    subtitle: Text(
+                        _request.title +
+                            ((_request.duration != null)
+                                ? " (${_request.duration} hours)"
+                                : ""),
+                        style: Theme.of(context).textTheme.title),
+                    title: Text(
+                        user.data != null
+                            ? "${user.data.name} is looking to ${_request.duration != null ? "rent" : "buy"}"
+                            : "",
+                        style: Theme.of(context).textTheme.subtitle),
+                  )));
         });
   }
 
   Widget showTiming() {
     if (_request.duration != null) {
-      return
-        Text("${_request.duration} hrs",
-            style: Theme
-                .of(context)
-                .textTheme
-                .display2);
+      return Text("${_request.duration} hrs",
+          style: Theme.of(context).textTheme.display2);
     }
 
-    return Icon(Icons.timer_off, size: 35);
+    return null;
   }
 }

@@ -26,44 +26,25 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  _CreateRequestDetailsPageState({this.title,
-    this.duration = 2,
-    this.buy = false,
-    this.address = "",
-    this.description = ""});
+  _CreateRequestDetailsPageState(
+      {this.title,
+      this.duration = 2,
+      this.buy = false,
+      this.address = "",
+      this.description = ""});
 
   @override
   Widget build(BuildContext context) {
-    final titleInputDecoration = InputDecoration(
-      hintText: 'a miter saw',
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.black, width: 1.0),
-      ),
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.black, width: 1.0),
-      ),
-    );
     final appBar = AppBar(
-      backgroundColor: Theme
-          .of(context)
-          .appBarTheme
-          .color,
+      backgroundColor: Theme.of(context).appBarTheme.color,
       brightness: Brightness.light,
       title:
-      Text("Create a request", style: Theme
-          .of(context)
-          .textTheme
-          .headline),
+          Text("Create a request", style: Theme.of(context).textTheme.headline),
     );
-    var style = Theme
-        .of(context)
-        .textTheme
-        .title;
+    var style = Theme.of(context).textTheme.title;
     return Scaffold(
         appBar: appBar,
-        backgroundColor: Theme
-            .of(context)
-            .scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Padding(
             padding: EdgeInsets.only(left: 16, right: 16, top: 16),
             child: Form(
@@ -80,7 +61,6 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                         child: TextFormField(
                           onChanged: (String newTitle) =>
                               setState(() => title = newTitle),
-                          autovalidate: true,
                           validator: (String value) {
                             return value.isEmpty
                                 ? "Please enter an item to request."
@@ -96,7 +76,6 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     Flexible(
                       flex: 1,
                       child: TextFormField(
-                        autovalidate: true,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           WhitelistingTextInputFormatter.digitsOnly
@@ -120,10 +99,9 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     Checkbox(
                       value: buy,
                       tristate: false,
-                      onChanged: (val) =>
-                          setState(() {
-                            buy = val;
-                          }),
+                      onChanged: (val) => setState(() {
+                        buy = val;
+                      }),
                     ),
                     Text("buy it", style: style),
                   ]),
@@ -143,31 +121,27 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       ),
                     ),
                   ]),
-                  Row(children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text("Suggested points: ", style: style),
                     Container(
                       width: 8,
                     ),
                     Flexible(
                         child: TextFormField(
-                          autovalidate: true,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly
-                          ],
-                          validator: (String value) {
-                            return int.tryParse(value) != null
-                                ? null
-                                : "";
-                          },
-                          onChanged: (String value) =>
-                              setState(() =>
-                              suggested_points = int.parse(value)),
-                        )),
-                    Flexible(
-                      child: Container(),
-                      flex: 4,
-                    )
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
+                      validator: (String value) {
+                        return int.tryParse(value) != null ? null : "";
+                      },
+                      style: Theme.of(context).textTheme.body1,
+                      decoration: InputDecoration(
+                        labelText: '(#)',
+                      ),
+                      onChanged: (String value) =>
+                          setState(() => suggested_points = int.parse(value)),
+                    ))
                   ]),
                   Container(height: 12),
                   Row(
