@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
       initialRoute: '/',
       routes: {
-        '/requests': (context) => RequestListWidget(users[0]),
+        '/requests': (context) => RequestListWidget(),
         '/requests/new': (context) => CreateRequestTitlePage(),
       },
       home: CreateRequestTitlePage(),

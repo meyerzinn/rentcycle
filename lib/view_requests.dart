@@ -3,9 +3,7 @@ import 'package:rentcycle/create_request_title_page.dart';
 import 'util.dart';
 
 class RequestListWidget extends StatefulWidget {
-  final User user;
-
-  RequestListWidget(this.user);
+  RequestListWidget();
 
   @override
   RequestListState createState() => RequestListState();
@@ -23,21 +21,15 @@ class RequestListState extends State<RequestListWidget> {
   List<UserRequest> _requests;
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
-  void _refresh() {
-    // TODO connect firestore later
-    _requests = _getRequests();
-  }
-
   @override
   Widget build(BuildContext _) {
-    if (_requests == null) _requests = _getRequests();
+    if (_requests == null) _getRequests();
 
     return Scaffold(
       appBar: AppBar(title: Text("Requests"), actions: <Widget>[
         IconButton(
             icon: Icon(Icons.add, color: BODY_COLOR),
             onPressed: () {
-              // TODO redirect to Meyer's page
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -49,7 +41,7 @@ class RequestListState extends State<RequestListWidget> {
           onSelected: (OrderingMode result) {
             setState(() {
               orderingMode = result;
-              _requests = _getRequests();
+              _sortByOrdering();
             });
           },
           itemBuilder: _buildSortPopup,
@@ -62,21 +54,16 @@ class RequestListState extends State<RequestListWidget> {
           itemCount: _requests.length,
           itemBuilder: (BuildContext bctx, int ndx) {
             var reqW = _requests[ndx];
-            if (reqW.hideFrom.contains(widget.user.id)) return null;
+            if (reqW.hideFrom.contains(currentUser.id)) return null;
 
-            return RequestWidget(widget.user, reqW);
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _refresh,
-        tooltip: 'Refresh',
-        child: Icon(Icons.refresh),
-        backgroundColor: ACCENT_COLOR,
-      ),
-    );
+            return RequestWidget(currentUser, reqW);
+          }));
   }
 
-  List<UserRequest> _getRequests() => _sortByOrdering(
-      userRequests.where((x) => !x.hideFrom.contains(widget.user.id)).toList());
+  void _getRequests() {
+    _requests = userRequests.where((x) => !x.hideFrom.contains(currentUser.id)).toList();
+    _sortByOrdering();
+  }
 
   List<PopupMenuEntry<OrderingMode>> _buildSortPopup(BuildContext bctx) =>
       <PopupMenuEntry<OrderingMode>>[
@@ -94,30 +81,36 @@ class RequestListState extends State<RequestListWidget> {
             child: Text("Shortest Duration")),
       ];
 
-  List<UserRequest> _sortByOrdering(List<UserRequest> requests) {
+  void _sortByOrdering() {
     switch (orderingMode) {
       case OrderingMode.LEAST_POINTS:
-        return requests.sortBy((x) => x.suggestedPoints).reversed.toList();
+        _requests.sortBy((x) => x.pointsAvg);
+        _requests = _requests.reversed.toList();
+        break;
       case OrderingMode.MOST_POINTS:
-        return requests.sortBy((x) => x.suggestedPoints);
+        _requests.sortBy((x) => x.pointsAvg);
+        break;
       case OrderingMode.SHORTEST_DURATION:
-        return requests.sortBy((x) {
-          if (x is LendRequest) return x.lendFor.inMinutes;
+        _requests.sortBy((x) {
+          if (x is LendRequest) return x.lendFor;
 
           return double.infinity;
         });
+        break;
       case OrderingMode.LONGEST_DURATION:
-        return requests
-            .sortBy((x) {
-              if (x is LendRequest) return x.lendFor.inMinutes;
+        _requests.sortBy((x) {
+            if (x is LendRequest) return x.lendFor;
 
-              return double.infinity;
-            })
-            .reversed
-            .toList();
+            return double.infinity;
+          });
+
+        _requests = _requests.reversed.toList();
+        break;
       case OrderingMode.MOST_RECENT:
-        return requests
-            .sortBy((x) => DateTime.now().difference(x.postDate).inMinutes);
+        _requests.sortBy((x) => DateTime.now().difference(x.postDate).inMinutes);
+        break;
+      default:
+        break;
     }
   }
 }
@@ -185,7 +178,7 @@ class RequestWidgetState extends State<RequestWidget> {
 
       return Column(children: <Widget>[
         Icon(Icons.timer, size: 30),
-        Text("For ${ler.lendFor.inHours} Hours",
+        Text("For ${ler.lendFor} Hours",
             style: Theme.of(context).textTheme.subtitle)
       ]);
     }

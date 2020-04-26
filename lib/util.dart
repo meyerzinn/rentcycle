@@ -6,9 +6,8 @@ class User {
   final int id;
   final String name;
   final String email;
-  final String address;
 
-  User(this.id, this.name, {this.email, this.address});
+  User(this.id, this.name, {this.email});
 }
 
 abstract class UserRequest {
@@ -16,13 +15,15 @@ abstract class UserRequest {
   final String itemName;
   final int suggestedPoints;
   final DateTime postDate;
+  final String description;
+  final String address;
 
   List<int> hideFrom;
   List<int> bids;
 
   User lender, receiver;
 
-  UserRequest(this.id, this.itemName, this.suggestedPoints, this.receiver, this.postDate) {
+  UserRequest(this.id, this.itemName, this.suggestedPoints, this.receiver, this.postDate, this.description, this.address) {
     hideFrom = <int>[];
     bids = <int>[];
   }
@@ -39,10 +40,10 @@ abstract class UserRequest {
 }
 
 class LendRequest extends UserRequest {
-  final Duration lendFor;
+  final int lendFor;
 
-  LendRequest(int id, String itemName, int points, User receiver, this.lendFor)
-    : super(id, itemName, points, receiver, DateTime.now());
+  LendRequest(int id, String itemName, int points, User receiver, String description, String address, this.lendFor)
+    : super(id, itemName, points, receiver, DateTime.now(), description, address);
 
   void fulfillRequest(User u) {
 
@@ -54,8 +55,8 @@ class LendRequest extends UserRequest {
 }
 
 class BuyRequest extends UserRequest {
-  BuyRequest(int id, String itemName, int points, User receiver)
-    : super(id, itemName, points, receiver, DateTime.now());
+  BuyRequest(int id, String itemName, int points, User receiver, String description, String address)
+    : super(id, itemName, points, receiver, DateTime.now(), description, address);
 
   void fulfillRequest(User u) {
 
@@ -68,7 +69,7 @@ class BuyRequest extends UserRequest {
 
 var users = [User(0, "Joe Test"), User(1, "Steven Debug")];
 var userRequests = <UserRequest>[
-  LendRequest(0, "Lawn Mower", 10, users[0], new Duration(hours: 6))
+  LendRequest(0, "Lawn Mower", 10, users[0], "", "", 6)
 ];
 
 extension SortableList<T> on List<T> {
@@ -77,6 +78,8 @@ extension SortableList<T> on List<T> {
     return this;
   }
 }
+
+var currentUser = users[1];
 
 // COLORS
 const ACCENT_COLOR = Colors.greenAccent;

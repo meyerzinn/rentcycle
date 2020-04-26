@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:rentcycle/util.dart';
 import 'package:rentcycle/view_requests.dart';
 
+import 'dart:math';
+
 class CreateRequestDetailsPage extends StatefulWidget {
   final String initialTitle;
 
@@ -145,12 +147,14 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       FlatButton(
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
-                            // todo add the form values
+                            var userReq = _makeUserReq();
+                            userRequests.add(userReq);
+
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        RequestListWidget(users[0])));
+                                        RequestListWidget()));
                           }
                         },
                         child: const Text('CONTINUE'),
@@ -160,5 +164,20 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                 ],
               ),
             )));
+  }
+
+  UserRequest _makeUserReq() {
+    int id = new Random().nextInt(1 << 16);
+
+    if (buy) {
+      return BuyRequest(
+        id, title, 10, currentUser, description, address
+      );
+    }
+    else {
+      return LendRequest(
+        id, title, 10, currentUser, description, address, duration
+      );
+    }
   }
 }
