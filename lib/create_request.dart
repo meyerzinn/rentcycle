@@ -222,7 +222,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
       "description": description,
       "duration": buy ? null : duration,
       "image_url": null,
-      "suggested_points": 10, //todo
+      "suggested_points": suggested_points, //todo
       "title": title,
     });
   }

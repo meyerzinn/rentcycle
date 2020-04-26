@@ -25,20 +25,21 @@ class RequestListState extends State<RequestListPage> {
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
   StreamBuilder<QuerySnapshot> _getRequests() {
-    dynamic stream = widget.firestore.collection('/requests');
+    CollectionReference stream = widget.firestore.collection('requests');
+    Query query;
     if (orderingMode == OrderingMode.MOST_POINTS) {
-      stream = stream.orderBy("suggested_points", descending: true);
+      query = stream.orderBy("suggested_points", descending: true);
     } else if (orderingMode == OrderingMode.LEAST_POINTS) {
-      stream = stream.orderBy("suggested_points", descending: false);
+      query = stream.orderBy("suggested_points", descending: false);
     } else if (orderingMode == OrderingMode.LONGEST_DURATION) {
-      stream = stream.orderBy("duration", descending: true);
+      query = stream.orderBy("duration", descending: true);
     } else if (orderingMode == OrderingMode.SHORTEST_DURATION) {
-      stream = stream.orderBy("duration", descending: false);
-    } else if (orderingMode == OrderingMode.MOST_RECENT) {
-      stream = stream.orderBy("created_at", descending: true);
+      query = stream.orderBy("duration", descending: false);
+    } else {
+      query = stream.orderBy("created_at", descending: true);
     }
     return StreamBuilder<QuerySnapshot>(
-      stream: stream.snapshots(),
+      stream: query.snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return Text("Loading..."); // todo make pretty
         final int messageCount = snapshot.data.documents.length;
@@ -52,10 +53,10 @@ class RequestListState extends State<RequestListPage> {
               created_at: (document.data['created_at'] as Timestamp).toDate(),
               image_url: document.data['image_url'],
               description: document.data['description'],
-              suggested_points: document.data['suggested_points'] as int,
+              suggested_points: document.data['suggested_points'],
               user: document.data['user'],
               address: document.data['address'],
-              duration: document.data['duration'] != null ? int.tryParse(document.data['duration']) : null,
+              duration: document.data['duration'],
             );
             return RequestWidget(widget.firestore, request);
           },
@@ -146,11 +147,12 @@ class RequestWidgetState extends State<RequestWidget> {
           );
         },
         child: Dismissible(
-            key: Key(_request.id.toString()),
+            key: UniqueKey(),
+            // todo change this to key when implementing dismissals
             onDismissed: (direction) {
               if (direction == DismissDirection.horizontal) {
                 setState(() {
-                  _request.hide();
+                  _request.hide(widget.firestore);
                 });
               }
             },

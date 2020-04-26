@@ -9,6 +9,11 @@ class User {
   final int balance;
 
   User(this.id, this.name, this.balance);
+
+  Future<List<String>> getHiddenRequests(Firestore firestore) async {
+    var fut = await firestore.document(id).get();
+    return fut.data['hidden_requests'];
+  }
 }
 
 class UserOffer {
@@ -17,8 +22,6 @@ class UserOffer {
   final int suggestedPoints;
   final bool buy;
   String imageURL;
-
-//  List<int> hideFrom = [];
 
   UserOffer(this.id, this.title, this.suggestedPoints, this.buy, this.imageURL);
 }
@@ -34,26 +37,25 @@ class UserRequest {
   final String image_url;
   final int duration;
 
-  bool hidden = false;
-
-  UserRequest(
-      {this.id,
-        this.user,
-        this.title,
-        this.suggested_points,
-        this.created_at,
-        this.description,
-        this.address,
-        this.image_url,
-        this.duration});
-
-  void hide() {
-    hidden = true;
-  }
+  UserRequest({this.id,
+      this.user,
+      this.title,
+      this.suggested_points,
+      this.created_at,
+      this.description,
+      this.address,
+      this.image_url,
+      this.duration});
 
   Future<User> getUser(Firestore firestore) async {
     var fut = await firestore.document(user).get();
     return User(fut.documentID, await fut.data['name'], await fut.data['balance']);
+  }
+
+  void hide(Firestore firestore) async {
+    await firestore.document(currentUser).updateData({
+      'hidden_requests': FieldValue.arrayUnion([id])
+    });
   }
 
 //  get pointsAvg => bids.length == 0
