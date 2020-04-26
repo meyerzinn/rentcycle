@@ -25,18 +25,20 @@ class RequestListState extends State<RequestListPage> {
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
   StreamBuilder<QuerySnapshot> _getRequests() {
-    CollectionReference stream = widget.firestore.collection('requests');
-    Query query;
+    Query query = widget.firestore
+        .collection('requests')
+        .where('user', isGreaterThan: currentUser)
+        .where('user', isLessThan: currentUser);
     if (orderingMode == OrderingMode.MOST_POINTS) {
-      query = stream.orderBy("suggested_points", descending: true);
+      query = query.orderBy("suggested_points", descending: true);
     } else if (orderingMode == OrderingMode.LEAST_POINTS) {
-      query = stream.orderBy("suggested_points", descending: false);
+      query = query.orderBy("suggested_points", descending: false);
     } else if (orderingMode == OrderingMode.LONGEST_DURATION) {
-      query = stream.orderBy("duration", descending: true);
+      query = query.orderBy("duration", descending: true);
     } else if (orderingMode == OrderingMode.SHORTEST_DURATION) {
-      query = stream.orderBy("duration", descending: false);
+      query = query.orderBy("duration", descending: false);
     } else {
-      query = stream.orderBy("created_at", descending: true);
+      query = query.orderBy("created_at", descending: true);
     }
     return StreamBuilder<QuerySnapshot>(
       stream: query.snapshots(),
@@ -141,10 +143,10 @@ class RequestWidgetState extends State<RequestWidget> {
     return GestureDetector(
         onTap: () {
           Navigator.push(
-            context, MaterialPageRoute(
-              builder: (context) => RequestDetailsPage(widget.firestore, _request)
-            )
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      RequestDetailsPage(widget.firestore, _request)));
         },
         child: Dismissible(
             key: UniqueKey(),
@@ -159,7 +161,7 @@ class RequestWidgetState extends State<RequestWidget> {
             child: Card(
                 elevation: 2.0,
                 margin:
-                new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                    new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: Container(
