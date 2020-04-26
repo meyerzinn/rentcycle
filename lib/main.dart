@@ -60,22 +60,6 @@ ThemeData buildTheme(BuildContext context) {
       )
     ),
     cursorColor: ACCENT_COLOR
-        // section/card titles
-        title: GoogleFonts.spartan(
-          fontStyle: FontStyle.normal,
-          fontSize: 24,
-          textStyle: textTheme.title,
-        ),
-        subtitle: GoogleFonts.openSans(
-            fontStyle: FontStyle.normal,
-            fontSize: 12,
-            textStyle: textTheme.subtitle),
-        display1: GoogleFonts.roboto(
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.bold,
-            color: ACCENT_COLOR,
-            textStyle: textTheme.display1,
-            fontSize: 35)),
   );
 }
 
@@ -92,10 +76,10 @@ class MyApp extends StatelessWidget {
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
       initialRoute: '/',
       routes: {
-        '/requests': (context) => RequestListWidget(firestore),
+        '/requests': (context) => RequestListPage(firestore),
         '/requests/new': (context) => CreateRequestDetailsPage(firestore)
       },
-      home: RequestListWidget(firestore),
+      home: RequestListPage(firestore),
     );
   }
 }

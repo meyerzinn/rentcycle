@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rentcycle/create_request_title_page.dart';
-import 'view_request_details.dart';
 import 'package:rentcycle/create_request.dart';
+import 'package:rentcycle/view_request_details.dart';
 import 'util.dart';
 
 class RequestListPage extends StatefulWidget {
-  RequestListPage();
-class RequestListWidget extends StatefulWidget {
   final Firestore firestore;
 
-  RequestListWidget(this.firestore);
+  RequestListPage(this.firestore);
 
   @override
   RequestListState createState() => RequestListState();
@@ -24,7 +21,7 @@ enum OrderingMode {
   LONGEST_DURATION
 }
 
-class RequestListState extends State<RequestListWidget> {
+class RequestListState extends State<RequestListPage> {
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
   StreamBuilder<QuerySnapshot> _getRequests() {
@@ -67,10 +64,6 @@ class RequestListState extends State<RequestListWidget> {
     );
   }
 
-  RequestListState() {
-    _getRequests();
-  }
-
   @override
   Widget build(BuildContext _) {
     return Scaffold(
@@ -86,8 +79,7 @@ class RequestListState extends State<RequestListWidget> {
                       builder: (context) =>
                           CreateRequestDetailsPage(widget.firestore)));
             },
-            tooltip: "Make Request")
-        ),
+            tooltip: "Make Request"),
         PopupMenuButton(
           icon: Icon(Icons.sort, color: BODY_COLOR),
           onSelected: (OrderingMode result) {
@@ -100,16 +92,6 @@ class RequestListState extends State<RequestListWidget> {
         )
       ]),
       body: _getRequests(),
-//        ListView.builder(
-//            scrollDirection: Axis.vertical,
-//            shrinkWrap: true,
-//            itemCount: _requests.length,
-//            itemBuilder: (BuildContext bctx, int ndx) {
-//              var reqW = _requests[ndx];
-//              if (reqW.hideFrom.contains(currentUser.id)) return null;
-//
-//              return RequestWidget(currentUser, reqW);
-//            }));
     );
   }
 
@@ -128,21 +110,6 @@ class RequestListState extends State<RequestListWidget> {
             value: OrderingMode.SHORTEST_DURATION,
             child: Text("Shortest Duration")),
       ];
-      body: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: _requests.length,
-          itemBuilder: (BuildContext bctx, int ndx) {
-            var reqW = _requests[ndx];
-            if (reqW.hideFrom.contains(currentUser.id)) return null;
-
-            return RequestWidget(currentUser, reqW);
-          }));
-  }
-
-  void _getRequests() {
-    _requests = userRequests.where((x) => !x.hideFrom.contains(currentUser.id)).toList();
-  }
 }
 
 class RequestWidget extends StatefulWidget {
@@ -173,9 +140,8 @@ class RequestWidgetState extends State<RequestWidget> {
     return GestureDetector(
         onTap: () {
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RequestDetailsPage(_request)
+            context, MaterialPageRoute(
+              builder: (context) => RequestDetailsPage(widget.firestore, _request)
             )
           );
         },
@@ -191,7 +157,7 @@ class RequestWidgetState extends State<RequestWidget> {
             child: Card(
                 elevation: 2.0,
                 margin:
-                    new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: Container(
@@ -205,7 +171,7 @@ class RequestWidgetState extends State<RequestWidget> {
                                 border: new Border(
                                     right: new BorderSide(
                                         width: 1.0, color: BORDER_COLOR))),
-                            child: Text(_request.pointsAvg.toString(),
+                            child: Text(_request.suggested_points.toString(),
                                 style: Theme.of(context).textTheme.display1)),
                         title: Text(_request.title,
                             style: Theme.of(context).textTheme.title),

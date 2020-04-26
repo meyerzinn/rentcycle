@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'util.dart';
 import 'view_requests.dart';
 
-class RequestDetailsPage extends StatelessWidget {
-  final UserRequest _request;
+class RequestDetailsPage extends StatefulWidget {
+  final Firestore firestore;
+  final UserRequest request;
 
-  RequestDetailsPage(this._request);
+  RequestDetailsPage(this.firestore, this.request);
+
+  @override
+  RequestDetailsState createState() => RequestDetailsState();
+}
+
+class RequestDetailsState extends State<RequestDetailsPage> {
+  User user;
+
+  @override
+  void initState() {
+    widget.request.getUser(widget.firestore).then(
+        (user) => setState(() { this.user = user; } )
+    );
+  }
 
   @override
   Widget build(BuildContext bctx) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_request.itemName)
+        title: Text(widget.request.title)
       ),
       body: Container(
         margin: new EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -23,7 +39,7 @@ class RequestDetailsPage extends StatelessWidget {
               margin: new EdgeInsets.only(bottom: 10),
               child: Row(children: <Widget>[
                 Text("By: ", style: Theme.of(bctx).textTheme.title),
-                Text(_request.receiver.name, style: Theme.of(bctx).textTheme.body1)
+                Text(user?.name, style: Theme.of(bctx).textTheme.body1)
               ]),
             ),
             Container(
@@ -46,7 +62,7 @@ class RequestDetailsPage extends StatelessWidget {
                   showDialog(
                       context: bctx,
                       builder: (context) => Dialog(
-                        child: BidPopupWidget(_request)
+                        child: BidPopupWidget(widget.firestore, widget.request)
                       )
                   );
                 },
@@ -55,9 +71,9 @@ class RequestDetailsPage extends StatelessWidget {
                 child: Text("Ignore", style: Theme.of(bctx).textTheme.button),
                 color: ACCENT_COLOR,
                 onPressed: () {
-                  _request.hideFromUser(currentUser);
+                  widget.request.hide();
                   Navigator.pushReplacement(bctx,
-                      MaterialPageRoute(builder: (context) => RequestListPage())
+                      MaterialPageRoute(builder: (context) => RequestListPage(widget.firestore))
                   );
                 },
               )
@@ -69,22 +85,23 @@ class RequestDetailsPage extends StatelessWidget {
   }
 
   Widget makeDescription(BuildContext bctx) {
-    if (_request.description == "") {
+    if (widget.request.description == "") {
       return Text("No description provided",
           style: Theme.of(bctx).textTheme.body2.copyWith(
             fontStyle: FontStyle.italic
           ));
     }
     else {
-      return Text(_request.description, style: Theme.of(bctx).textTheme.body2);
+      return Text(widget.request.description, style: Theme.of(bctx).textTheme.body2);
     }
   }
 }
 
 class BidPopupWidget extends StatefulWidget {
   final UserRequest request;
+  final Firestore firestore;
 
-  BidPopupWidget(this.request);
+  BidPopupWidget(this.firestore, this.request);
 
   @override
   BidPopupState createState() => BidPopupState();
@@ -172,15 +189,15 @@ class BidPopupState extends State<BidPopupWidget> {
   }
 
   void _doBid(bctx) {
-    widget.request.bids[currentUser.id] = bid;
+    /*widget.request.bids[currentUser.id] = bid;
     Navigator.of(bctx).pop();
 
     widget.request.hideFromUser(currentUser);
     Navigator.pushReplacement(bctx,
       MaterialPageRoute(
-          builder: (bctx) => RequestListPage()
+          builder: (bctx) => RequestListPage(widget.firestore,)
       )
-    );
+    );*/
   }
 }
 
