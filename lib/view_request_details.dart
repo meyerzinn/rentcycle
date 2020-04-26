@@ -71,7 +71,7 @@ class RequestDetailsState extends State<RequestDetailsPage> {
                 child: Text("Ignore", style: Theme.of(bctx).textTheme.button),
                 color: ACCENT_COLOR,
                 onPressed: () {
-                  widget.request.hide();
+                  widget.request.hide(widget.firestore);
                   Navigator.pushReplacement(bctx,
                       MaterialPageRoute(builder: (context) => RequestListPage(widget.firestore))
                   );
