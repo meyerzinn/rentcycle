@@ -59,6 +59,11 @@ ThemeData buildTheme(BuildContext context) {
               color: Colors.blue,
               textStyle: textTheme.display1,
               fontSize: 24),
+          display3: GoogleFonts.robotoSlab(
+              fontStyle: FontStyle.normal,
+              color: Colors.black,
+              textStyle: textTheme.display1,
+              fontSize: 30),
           body1: GoogleFonts.openSans(
               fontStyle: FontStyle.normal,
               fontSize: 18,

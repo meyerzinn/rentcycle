@@ -39,9 +39,9 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
       backgroundColor: Theme.of(context).appBarTheme.color,
       brightness: Brightness.light,
       title:
-          Text("Create a request", style: Theme.of(context).textTheme.headline),
+          Text("Create a request"),
     );
-    var style = Theme.of(context).textTheme.title;
+    var style = Theme.of(context).textTheme.display3;
     return Scaffold(
         appBar: appBar,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -77,6 +77,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       flex: 1,
                       child: TextFormField(
                         keyboardType: TextInputType.number,
+                        decoration: InputDecoration(labelText: "(number)"),
                         inputFormatters: [
                           WhitelistingTextInputFormatter.digitsOnly
                         ],
@@ -110,6 +111,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     Container(width: 8),
                     Flexible(
                       child: TextFormField(
+                        decoration: InputDecoration(labelText: "(address)"),
                         validator: (value) {
                           if (value.isEmpty || value == "") {
                             return "Please enter your address.";
@@ -137,7 +139,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       },
                       style: Theme.of(context).textTheme.body1,
                       decoration: InputDecoration(
-                        labelText: '(#)',
+                        labelText: '(number)',
                       ),
                       onChanged: (String value) =>
                           setState(() => suggested_points = int.parse(value)),
