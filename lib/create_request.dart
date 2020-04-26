@@ -78,7 +78,6 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     children: <Widget>[
                       Flexible(
                         child: TextFormField(
-                          controller: TextEditingController(text: title),
                           onChanged: (String newTitle) =>
                               setState(() => title = newTitle),
                           autovalidate: true,
@@ -98,8 +97,6 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                       flex: 1,
                       child: TextFormField(
                         autovalidate: true,
-                        controller:
-                        TextEditingController(text: duration.toString()),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           WhitelistingTextInputFormatter.digitsOnly
@@ -153,8 +150,6 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     Flexible(
                         child: TextFormField(
                           autovalidate: true,
-                          controller: TextEditingController(
-                              text: suggested_points.toString()),
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             WhitelistingTextInputFormatter.digitsOnly
