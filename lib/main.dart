@@ -24,7 +24,7 @@ ThemeData buildTheme(BuildContext context) {
   return ThemeData(
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
-        color: Colors.transparent,
+        color: Colors.white,
         brightness: Brightness.light,
         textTheme: TextTheme(
           title: GoogleFonts.raleway(

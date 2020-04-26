@@ -31,9 +31,9 @@ extension Readable on OrderingMode {
       case OrderingMode.LEAST_POINTS:
         return "by least points";
       case OrderingMode.SHORTEST_DURATION:
-        return "buy requests";
-      case OrderingMode.LONGEST_DURATION:
         return "borrow requests";
+      case OrderingMode.LONGEST_DURATION:
+        return "buy requests";
       default:
         return null;
     }
