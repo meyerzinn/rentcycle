@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:rentcycle/create_request_title_page.dart';
 import 'util.dart';
 
@@ -173,4 +173,4 @@ class _OfferWidgetState extends State<OfferWidget> {
                               .subtitle),
     )))));
   }
-}
+}*/

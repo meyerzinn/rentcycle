@@ -6,8 +6,9 @@ class User {
   final int id;
   final String name;
   final String email;
+  final int balance;
 
-  User(this.id, this.name, {this.email});
+  User(this.id, this.name, this.balance, {this.email});
 }
 
 class UserOffer {
@@ -32,7 +33,7 @@ abstract class UserRequest {
   final String imageURL;
 
   List<int> hideFrom = [];
-  List<int> bids = [];
+  Map<int, int> bids = {};
 
   User lender, receiver;
 
@@ -48,7 +49,7 @@ abstract class UserRequest {
 
   get pointsAvg => bids.length == 0
       ? suggestedPoints
-      : (bids.reduce(min) + suggestedPoints) ~/ 2;
+      : (bids.values.reduce(min) + suggestedPoints) ~/ 2;
 }
 
 class LendRequest extends UserRequest {
@@ -75,7 +76,7 @@ class BuyRequest extends UserRequest {
   void acceptOffer(User u) {}
 }
 
-var users = [User(0, "Joe Test"), User(1, "Steven Debug")];
+var users = [User(0, "Joe Test", 200), User(1, "Steven Debug", 200)];
 var userRequests = <UserRequest>[
   LendRequest(
       0,
@@ -108,3 +109,4 @@ const BODY_COLOR = Colors.black;
 const MAIN_BG_COLOR = Colors.white;
 const SECONDARY_BG_COLOR = Colors.white70;
 const BORDER_COLOR = Colors.grey;
+const ERROR_COLOR = Colors.red;

@@ -29,7 +29,7 @@ ThemeData buildTheme(BuildContext context) {
       title: GoogleFonts.openSans(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
-        fontSize: 16,
+        fontSize: 18,
         textStyle: textTheme.title,
       ),
       subtitle: GoogleFonts.openSans(
@@ -43,8 +43,14 @@ ThemeData buildTheme(BuildContext context) {
         color: ACCENT_COLOR,
         textStyle: textTheme.display1,
         fontSize: 35
+      ),
+      body1: GoogleFonts.openSans(
+        fontStyle: FontStyle.normal,
+        fontSize: 18,
+        textStyle: textTheme.body1
       )
     ),
+    cursorColor: ACCENT_COLOR
   );
 }
 
@@ -57,7 +63,7 @@ class MyApp extends StatelessWidget {
       theme: buildTheme(context).copyWith(brightness: Brightness.light),
       initialRoute: '/',
       routes: {
-        '/requests': (context) => RequestListWidget(),
+        '/requests': (context) => RequestListPage(),
         '/requests/new': (context) => CreateRequestTitlePage(),
       },
       home: CreateRequestTitlePage(),

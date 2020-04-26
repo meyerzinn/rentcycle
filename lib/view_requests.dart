@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rentcycle/create_request_title_page.dart';
+import 'view_request_details.dart';
 import 'util.dart';
 
-class RequestListWidget extends StatefulWidget {
-  RequestListWidget();
+class RequestListPage extends StatefulWidget {
+  RequestListPage();
 
   @override
   RequestListState createState() => RequestListState();
@@ -17,14 +18,16 @@ enum OrderingMode {
   LONGEST_DURATION
 }
 
-class RequestListState extends State<RequestListWidget> {
+class RequestListState extends State<RequestListPage> {
   List<UserRequest> _requests;
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
+  RequestListState() {
+    _getRequests();
+  }
+
   @override
   Widget build(BuildContext _) {
-    if (_requests == null) _getRequests();
-
     return Scaffold(
       appBar: AppBar(title: Text("Requests"), actions: <Widget>[
         IconButton(
@@ -35,18 +38,7 @@ class RequestListState extends State<RequestListWidget> {
                   MaterialPageRoute(
                       builder: (context) => CreateRequestTitlePage()));
             },
-            tooltip: "Make Request"),
-        PopupMenuButton(
-          icon: Icon(Icons.sort, color: BODY_COLOR),
-          onSelected: (OrderingMode result) {
-            setState(() {
-              orderingMode = result;
-              _sortByOrdering();
-            });
-          },
-          itemBuilder: _buildSortPopup,
-          tooltip: "Select Ordering",
-        )
+            tooltip: "Make Request")
       ]),
       body: ListView.builder(
           scrollDirection: Axis.vertical,
@@ -62,57 +54,6 @@ class RequestListState extends State<RequestListWidget> {
 
   void _getRequests() {
     _requests = userRequests.where((x) => !x.hideFrom.contains(currentUser.id)).toList();
-    _sortByOrdering();
-  }
-
-  List<PopupMenuEntry<OrderingMode>> _buildSortPopup(BuildContext bctx) =>
-      <PopupMenuEntry<OrderingMode>>[
-        const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.MOST_RECENT, child: Text("Most Recent")),
-        const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.LEAST_POINTS, child: Text("Least Points")),
-        const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.MOST_POINTS, child: Text("Most Points")),
-        const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.LONGEST_DURATION,
-            child: Text("Longest Duration")),
-        const PopupMenuItem<OrderingMode>(
-            value: OrderingMode.SHORTEST_DURATION,
-            child: Text("Shortest Duration")),
-      ];
-
-  void _sortByOrdering() {
-    switch (orderingMode) {
-      case OrderingMode.LEAST_POINTS:
-        _requests.sortBy((x) => x.pointsAvg);
-        _requests = _requests.reversed.toList();
-        break;
-      case OrderingMode.MOST_POINTS:
-        _requests.sortBy((x) => x.pointsAvg);
-        break;
-      case OrderingMode.SHORTEST_DURATION:
-        _requests.sortBy((x) {
-          if (x is LendRequest) return x.lendFor;
-
-          return double.infinity;
-        });
-        print(_requests[0]);
-        break;
-      case OrderingMode.LONGEST_DURATION:
-        _requests.sortBy((x) {
-            if (x is LendRequest) return x.lendFor;
-
-            return double.infinity;
-          });
-
-        _requests = _requests.reversed.toList();
-        break;
-      case OrderingMode.MOST_RECENT:
-        _requests.sortBy((x) => DateTime.now().difference(x.postDate).inMinutes);
-        break;
-      default:
-        break;
-    }
   }
 }
 
@@ -135,8 +76,12 @@ class RequestWidgetState extends State<RequestWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          // TODO open request
-          print("test");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RequestDetailsPage(_request)
+            )
+          );
         },
         child: Dismissible(
             key: Key(_request.id.toString()),

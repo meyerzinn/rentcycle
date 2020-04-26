@@ -63,6 +63,11 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                           onChanged: (String newTitle) =>
                               setState(() => title = newTitle),
                           autovalidate: true,
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: ACCENT_COLOR)
+                              )
+                          ),
                           validator: (String value) {
                             return value.isEmpty
                                 ? "Please enter an item to request."
@@ -85,6 +90,11 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                         inputFormatters: [
                           WhitelistingTextInputFormatter.digitsOnly
                         ],
+                        decoration: InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: ACCENT_COLOR)
+                            )
+                        ),
                         validator: (String value) {
                           return int.tryParse(value) != null
                               ? null
@@ -113,6 +123,11 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                     Container(width: 8),
                     Flexible(
                       child: TextFormField(
+                        decoration: InputDecoration(
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: ACCENT_COLOR)
+                          )
+                        ),
                         validator: (value) {
                           if (value.isEmpty || value == "") {
                             return "Please enter your address.";
@@ -138,6 +153,11 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                             description = value;
                           });
                         },
+                        decoration: InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: ACCENT_COLOR)
+                            )
+                        )
                       ))
                     ],
                   ),
@@ -154,7 +174,7 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        RequestListWidget()));
+                                        RequestListPage()));
                           }
                         },
                         child: const Text('CONTINUE'),
