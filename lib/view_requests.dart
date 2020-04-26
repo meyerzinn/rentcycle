@@ -55,7 +55,7 @@ class RequestListState extends State<RequestListPage> {
     } else if (orderingMode == OrderingMode.SHORTEST_DURATION) {
       query = stream.orderBy("duration").startAfter([null]);
     } else {
-      query = stream.orderBy("created_at");
+      query = stream.orderBy("created_at", descending: true);
     }
     return StreamBuilder<QuerySnapshot>(
       stream: query.snapshots(),
