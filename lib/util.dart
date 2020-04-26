@@ -1,9 +1,10 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class User {
-  final int id;
+  final String id;
   final String name;
   final String email;
   final int balance;
@@ -18,64 +19,47 @@ class UserOffer {
   final bool buy;
   String imageURL;
 
-  List<int> hideFrom = [];
+//  List<int> hideFrom = [];
 
   UserOffer(this.id, this.title, this.suggestedPoints, this.buy, this.imageURL);
 }
 
-abstract class UserRequest {
-  final int id;
-  final String itemName;
-  final int suggestedPoints;
-  final DateTime postDate;
+class UserRequest {
+  final String id;
+  final String user;
+  final String title;
+  final int suggested_points;
+  final DateTime created_at;
   final String description;
   final String address;
-  final String imageURL;
+  final String image_url;
+  final int duration;
 
-  List<int> hideFrom = [];
-  Map<int, int> bids = {};
+  bool hidden = false;
 
-  User lender, receiver;
+  UserRequest(
+      {this.id,
+      this.user,
+      this.title,
+      this.suggested_points,
+      this.created_at,
+      this.description,
+      this.address,
+      this.image_url,
+      this.duration});
 
-  UserRequest(this.id, this.itemName, this.suggestedPoints, this.receiver,
-      this.postDate, this.description, this.address, this.imageURL);
-
-  void fulfillRequest(User u); // accept a bounty (be willing to give)
-  void acceptOffer(User u);
-
-  void hideFromUser(User u) {
-    if (!hideFrom.contains(u.id)) hideFrom.add(u.id);
+  void hide() {
+    hidden = true;
   }
 
-  get pointsAvg => bids.length == 0
-      ? suggestedPoints
-      : (bids.values.reduce(min) + suggestedPoints) ~/ 2;
-}
+  Future<User> getUser(Firestore firestore) async {
+    var fut = await firestore.document(user).get();
+    return User(fut.documentID, await fut.data['name']);
+  }
 
-class LendRequest extends UserRequest {
-  final int lendFor;
-
-  LendRequest(int id, String itemName, int points, User receiver,
-      String description, String address, String imageURL, this.lendFor)
-      : super(id, itemName, points, receiver, DateTime.now(), description,
-            address, imageURL);
-
-  void fulfillRequest(User u) {}
-
-  void acceptOffer(User u) {}
-}
-
-class BuyRequest extends UserRequest {
-  BuyRequest(int id, String itemName, int points, User receiver,
-      String description, String address, String imageURL)
-      : super(id, itemName, points, receiver, DateTime.now(), description,
-            address, imageURL);
-
-  void fulfillRequest(User u) {}
-
-  void acceptOffer(User u) {}
-}
-
+//  get pointsAvg => bids.length == 0
+//      ? suggested_points
+//      : (bids.reduce(min) + suggested_points) ~/ 2;
 var users = [User(0, "Joe Test", 200), User(1, "Steven Debug", 200)];
 var userRequests = <UserRequest>[
   LendRequest(
@@ -101,7 +85,7 @@ extension SortableList<T> on List<T> {
   }
 }
 
-var currentUser = users[1];
+var currentUser = '/users/IwxlXa9pzJkRMPItie6z';
 
 // COLORS
 const ACCENT_COLOR = Colors.greenAccent;

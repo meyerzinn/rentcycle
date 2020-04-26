@@ -161,7 +161,7 @@ class _OfferWidgetState extends State<OfferWidget> {
                                   .of(context)
                                   .textTheme
                                   .display1)),
-                      title: Text(_request.itemName,
+                      title: Text(_request.title,
                           style: Theme
                               .of(context)
                               .textTheme
