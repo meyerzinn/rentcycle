@@ -171,12 +171,12 @@ class _CreateRequestDetailsPageState extends State<CreateRequestDetailsPage> {
 
     if (buy) {
       return BuyRequest(
-        id, title, 10, currentUser, description, address
+        id, title, 10, currentUser, description, address, "",
       );
     }
     else {
       return LendRequest(
-        id, title, 10, currentUser, description, address, duration
+        id, title, 10, currentUser, description, address, "", duration
       );
     }
   }

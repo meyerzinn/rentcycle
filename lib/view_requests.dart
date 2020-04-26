@@ -96,6 +96,7 @@ class RequestListState extends State<RequestListWidget> {
 
           return double.infinity;
         });
+        print(_requests[0]);
         break;
       case OrderingMode.LONGEST_DURATION:
         _requests.sortBy((x) {

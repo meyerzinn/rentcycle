@@ -10,6 +10,18 @@ class User {
   User(this.id, this.name, {this.email});
 }
 
+class UserOffer {
+  final String id;
+  final String title;
+  final int suggestedPoints;
+  final bool buy;
+  String imageURL;
+
+  List<int> hideFrom = [];
+
+  UserOffer(this.id, this.title, this.suggestedPoints, this.buy, this.imageURL);
+}
+
 abstract class UserRequest {
   final int id;
   final String itemName;
@@ -17,59 +29,68 @@ abstract class UserRequest {
   final DateTime postDate;
   final String description;
   final String address;
+  final String imageURL;
 
-  List<int> hideFrom;
-  List<int> bids;
+  List<int> hideFrom = [];
+  List<int> bids = [];
 
   User lender, receiver;
 
-  UserRequest(this.id, this.itemName, this.suggestedPoints, this.receiver, this.postDate, this.description, this.address) {
-    hideFrom = <int>[];
-    bids = <int>[];
-  }
+  UserRequest(this.id, this.itemName, this.suggestedPoints, this.receiver,
+      this.postDate, this.description, this.address, this.imageURL);
 
   void fulfillRequest(User u); // accept a bounty (be willing to give)
   void acceptOffer(User u);
 
   void hideFromUser(User u) {
-    if (!hideFrom.contains(u.id))
-      hideFrom.add(u.id);
+    if (!hideFrom.contains(u.id)) hideFrom.add(u.id);
   }
 
-  get pointsAvg => bids.length == 0 ? suggestedPoints : (bids.reduce(min) + suggestedPoints) ~/ 2;
+  get pointsAvg => bids.length == 0
+      ? suggestedPoints
+      : (bids.reduce(min) + suggestedPoints) ~/ 2;
 }
 
 class LendRequest extends UserRequest {
   final int lendFor;
 
-  LendRequest(int id, String itemName, int points, User receiver, String description, String address, this.lendFor)
-    : super(id, itemName, points, receiver, DateTime.now(), description, address);
+  LendRequest(int id, String itemName, int points, User receiver,
+      String description, String address, String imageURL, this.lendFor)
+      : super(id, itemName, points, receiver, DateTime.now(), description,
+            address, imageURL);
 
-  void fulfillRequest(User u) {
+  void fulfillRequest(User u) {}
 
-  }
-
-  void acceptOffer(User u) {
-
-  }
+  void acceptOffer(User u) {}
 }
 
 class BuyRequest extends UserRequest {
-  BuyRequest(int id, String itemName, int points, User receiver, String description, String address)
-    : super(id, itemName, points, receiver, DateTime.now(), description, address);
+  BuyRequest(int id, String itemName, int points, User receiver,
+      String description, String address, String imageURL)
+      : super(id, itemName, points, receiver, DateTime.now(), description,
+            address, imageURL);
 
-  void fulfillRequest(User u) {
+  void fulfillRequest(User u) {}
 
-  }
-
-  void acceptOffer(User u) {
-
-  }
+  void acceptOffer(User u) {}
 }
 
 var users = [User(0, "Joe Test"), User(1, "Steven Debug")];
 var userRequests = <UserRequest>[
-  LendRequest(0, "Lawn Mower", 10, users[0], "", "", 6)
+  LendRequest(
+      0,
+      "Lawn Mower",
+      10,
+      users[0],
+      "",
+      "",
+      "https://images.homedepot-static.com/productImages/c3adbfbf-c846-43b9-9baf-f797d9823e78/svn/john-deere-zero-turn-mowers-bg21150-64_1000.jpg",
+      6)
+];
+
+var userOffers = <UserOffer>[
+  UserOffer("1", "Leaf Blower", 5, false,
+      "https://images-na.ssl-images-amazon.com/images/I/51gNQGs5d3L._AC_SX522_.jpg")
 ];
 
 extension SortableList<T> on List<T> {
