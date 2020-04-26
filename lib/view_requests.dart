@@ -25,20 +25,20 @@ class RequestListState extends State<RequestListPage> {
   OrderingMode orderingMode = OrderingMode.MOST_RECENT;
 
   StreamBuilder<QuerySnapshot> _getRequests() {
-    Query query = widget.firestore
-        .collection('requests')
-        .where('user', isGreaterThan: currentUser)
-        .where('user', isLessThan: currentUser);
+    CollectionReference stream = widget.firestore.collection('requests');
+    Query query;
+//        .where('user', isGreaterThan: currentUser)
+//        .where('user', isLessThan: currentUser);
     if (orderingMode == OrderingMode.MOST_POINTS) {
-      query = query.orderBy("suggested_points", descending: true);
+      query = stream.orderBy("suggested_points", descending: true);
     } else if (orderingMode == OrderingMode.LEAST_POINTS) {
-      query = query.orderBy("suggested_points", descending: false);
+      query = stream.orderBy("suggested_points", descending: false);
     } else if (orderingMode == OrderingMode.LONGEST_DURATION) {
-      query = query.orderBy("duration", descending: true);
+      query = stream.orderBy("duration", descending: true);
     } else if (orderingMode == OrderingMode.SHORTEST_DURATION) {
-      query = query.orderBy("duration", descending: false);
+      query = stream.orderBy("duration", descending: false);
     } else {
-      query = query.orderBy("created_at", descending: true);
+      query = stream.orderBy("created_at", descending: true);
     }
     return StreamBuilder<QuerySnapshot>(
       stream: query.snapshots(),
