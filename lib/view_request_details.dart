@@ -15,76 +15,81 @@ class RequestDetailsPage extends StatefulWidget {
 }
 
 class RequestDetailsState extends State<RequestDetailsPage> {
-  User user;
-
-  @override
-  void initState() {
-    widget.request.getUser(widget.firestore).then((user) => setState(() {
-          this.user = user;
-        }));
-  }
-
   @override
   Widget build(BuildContext bctx) {
-    return Scaffold(
-      appBar: AppBar(title: Text("View request")),
-      body: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
+    return FutureBuilder<User>(
+        future: widget.request.getUser(widget.firestore),
+        builder: (BuildContext bctx, AsyncSnapshot<User> user) {
+          Widget body;
+          if (user.hasData) {
+            return Scaffold(
+              appBar: AppBar(title: Text("View request")),
+              body: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
 //                  width: MediaQuery.of(bctx).size.width * 0.9,
-                  margin: new EdgeInsets.only(bottom: 10),
-                  child: Text(
-                      "${widget.request.title}\nfor ${user.name}\nof ${widget.request.address}:",
-                      style: Theme.of(bctx).textTheme.display3),
+                          margin: new EdgeInsets.only(bottom: 10),
+                          child: Text(
+                              "${widget.request.title}\nfor ${user.data.name}\nof ${widget.request.address}:",
+                              style: Theme.of(bctx).textTheme.display3),
 //                Text(user != null ? user.name : "", style: Theme.of(bctx).textTheme.body1)
-                ),
-                Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.only(left:12),
-                    decoration: new BoxDecoration(
-                        border: new Border(
-                            left: new BorderSide(
-                                width: 1.0, color: BORDER_COLOR))),
-                    child: makeDescription(bctx)),
-              ])),
-      bottomNavigationBar: BottomAppBar(
-          child: Container(
-              margin: new EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text("Make an offer",
-                        style: Theme.of(bctx).textTheme.button),
-                    color: ACCENT_COLOR,
-                    onPressed: () {
-                      showDialog(
-                          context: bctx,
-                          builder: (context) => Dialog(
-                              child: BidPopupWidget(
-                                  widget.firestore, widget.request)));
-                    },
-                  ),
-                  RaisedButton(
-                    child:
-                        Text("Ignore", style: Theme.of(bctx).textTheme.button),
-                    color: Theme.of(context).buttonColor,
-                    onPressed: () {
-                      widget.request.hide(widget.firestore);
-                      Navigator.pushReplacement(
-                          bctx,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  RequestListPage(widget.firestore)));
-                    },
-                  )
-                ],
-              ))),
-    );
+                        ),
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.only(left: 12),
+                            decoration: new BoxDecoration(
+                                border: new Border(
+                                    left: new BorderSide(
+                                        width: 1.0, color: BORDER_COLOR))),
+                            child: makeDescription(bctx)),
+                      ])),
+              bottomNavigationBar: BottomAppBar(
+                  child: Container(
+                      margin: new EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          RaisedButton(
+                            child: Text("Make an offer",
+                                style: Theme.of(bctx).textTheme.button),
+                            color: ACCENT_COLOR,
+                            onPressed: () {
+                              showDialog(
+                                  context: bctx,
+                                  builder: (context) => Dialog(
+                                      child: BidPopupWidget(
+                                          widget.firestore, widget.request)));
+                            },
+                          ),
+                          RaisedButton(
+                            child: Text("Ignore",
+                                style: Theme.of(bctx).textTheme.button),
+                            color: Theme.of(context).buttonColor,
+                            onPressed: () {
+                              widget.request.hide(widget.firestore);
+                              Navigator.pushReplacement(
+                                  bctx,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RequestListPage(widget.firestore)));
+                            },
+                          )
+                        ],
+                      ))),
+            );
+          } else {
+            return Scaffold(
+                appBar: AppBar(title: Text("View request")),
+                body: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text("Loading...",
+                        style: Theme.of(bctx).textTheme.display3)));
+          }
+        });
   }
 
   Widget makeDescription(BuildContext bctx) {
@@ -113,6 +118,7 @@ class BidPopupState extends State<BidPopupWidget> {
   bool bidValid = false;
   FocusNode fnode = new FocusNode();
 
+  // TODO this needs a form key and validation mechanism to enable the submission
   @override
   Widget build(BuildContext bctx) {
     return Container(
@@ -130,7 +136,6 @@ class BidPopupState extends State<BidPopupWidget> {
                   labelStyle: TextStyle(
                       color: fnode.hasFocus ? ACCENT_COLOR : BODY_COLOR)),
               focusNode: fnode,
-              autovalidate: true,
               inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
               validator: (value) {
                 if (value == "") {
@@ -177,8 +182,17 @@ class BidPopupState extends State<BidPopupWidget> {
         ));
   }
 
-  void _doBid(bctx) {
-//    widget.firestore
+  void _doBid(BuildContext bctx) {
+    widget.firestore
+        .document(widget.request.id)
+        .collection('bids')
+        .document()
+        .setData({
+      'user': widget.firestore.document(currentUser),
+      'points': bid,
+      'created_at': FieldValue.serverTimestamp(),
+    });
+    Navigator.of(bctx).pop();
     /*widget.request.bids[currentUser.id] = bid;
     Navigator.of(bctx).pop();
 

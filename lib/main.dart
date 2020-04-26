@@ -6,9 +6,12 @@ import 'util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'keys.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   final FirebaseApp app = await FirebaseApp.configure(
     name: 'client',
     options: AppFirebaseOptions,
@@ -64,9 +67,8 @@ ThemeData buildTheme(BuildContext context) {
               color: Colors.black,
               textStyle: textTheme.display1,
               fontSize: 30),
-          body1: GoogleFonts.openSans(
-              fontStyle: FontStyle.normal,
-              fontSize: 18)),
+          body1:
+              GoogleFonts.openSans(fontStyle: FontStyle.normal, fontSize: 18)),
       cursorColor: ACCENT_COLOR);
 }
 

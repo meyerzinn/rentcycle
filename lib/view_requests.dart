@@ -62,12 +62,10 @@ class RequestListState extends State<RequestListPage> {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return Text("Loading..."); // todo make pretty
         final int messageCount = snapshot.data.documents.length + 1;
-        print("Data changed, loading $messageCount listings.");
         return new ListView.builder(
           key: UniqueKey(),
           itemCount: messageCount,
           itemBuilder: (_, int index) {
-            print(index);
             if (index == 0)
               return Center(
                   child: Text("(showing ${orderingMode.readable()})",
@@ -85,7 +83,6 @@ class RequestListState extends State<RequestListPage> {
               address: document.data['address'],
               duration: document.data['duration'],
             );
-            print(request.id);
             return RequestWidget(widget.firestore, request);
           },
         );
